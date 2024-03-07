@@ -5,23 +5,29 @@ import io
 from PIL import Image, ImageDraw, ImageFont  # Import Image module from PIL package
 import face_recognition
 import pickle
+import os
+from dotenv import load_dotenv
+
 
 
 app = Flask(__name__)
+load_dotenv()
+# Firebase Service Account credentials
+import os
 
 # Firebase Service Account credentials
 firebase_credentials = {
-    "type": "service_account",
-    "project_id": "attendencetracker-ca4cd",
-    "private_key_id": "dec6910e58689df1ffdbdc4ddfd4bea0460522d8",
-    "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCmQgKP1VF5kba0\nSluFS4Gn7e/B5JH9Lzf+P7lQAI7bIXy/PEpYwFSFyvQOmpKQ6NCfkqHoJ/iktO5M\n5gqpSctcfJojzZBH1tKe18S7i3nUQtXn1KS0Ygj4ZAI/Xq0PpUw7lGzcQDfadEeq\nVriJc/TeP0Ov/pBJnNnW1FWiixLLOHAiqsy1f3pHWJAyKYHGaA2IOz8BVYEERscA\nIVQhmYUoSy8AOgTGUL6o0y4hchYcjxmMLDC86uVbYAvwQrPL8eYOcedAo+QSEpFE\nR1Apv3MOZVDqdCA74vwLhDd4TnUvv8Qd5LIk6HDrEASHbI7t8mPBm5OfQxEPq4iO\nMtdg3b6tAgMBAAECggEAMBj1o8W7MdfJSuQeEPRUmI/ZpjapU10nLjsiMbZPna5U\n6AAZpA5UBXa+30CxeRGZVSi3BTIXGRMsw3tjhzENj36Omx/7hwTrXr+eLwF9J76E\nInLeiT65SJ6qFcoed+HCqZPZYGiFoAG2v90husYch3U28EHNXTZuwNshwQnJ0JdW\nXxN93/xnkAYoG0uIV6MLPg70U8+h88acWNNdWKQrGIU1s9gsBHBb4PqBaGZM0Jch\njs1TeLNpNcJ2AgX6aj+TnNgcu5qjZ1b3efFr4H12erCnxix+QsTTqDB2BfsmT9gB\nAuKQJP2/Kq0iKrQ1rkWSfUbER1tgZSWHmLclg7P9EwKBgQDPBQmkQcJD9lUDa2Wf\n2Hw9XYJd6OGweZg2vFvD9qQ/1YFv2tQk2E1D3yDlliFfYra1jn4OKQRYdqXOHQB+\nLm+p4piNN1MWFhtiMf0hLw0foVVzUgzp48lKi4J0xwZb9Znler9Bv59M8JLu/YAD\ndBz3/ZvR5GJZC/16oyASkO4yUwKBgQDNmBJdBHtVPqyv0OPf8TXlZDFZjd7RbyLR\nb2we2SjywpBphPvNHNCXX/JY7Il37ykWCQ0FG7XA77kToVcXgiqV7hQ29D1y4Gwa\nrVw37r/C4UvPbvzM2/3DtvJilS5AOOvz6y5PTOUctVvSq4UR+yE/TdXkQQ50e0I9\nmww0GEgq/wKBgG9lVY/WdrNdXNePNcrykb/vjlP8GV19wKNLbdGf6TgUKidHSDpf\nTgxEh44i3+hU1N4TQ89Y0ObNSWEEiBxd3mY68T2j1Iig8rE/FueBSv2HMdTxBNPi\nZ5E+Sr+NzOU03k/2Ye3+L7kWBuqk6/pvw5rKE8u4qhcidY5FMt/qrtHTAoGAJiWR\nQrESMT7vy692mJao6WctwPAR58o3K6UA6rhgYKq5INsL3YL7MRscXGOHHjnB5dTI\nFaqOjr3sGThWcIY2YJtMJOYsgKQjas+/zKD/86jZ6CMvxNMMwsOvNZt4eXIWVavN\na+lYmXsNDonEpxFxmc1XYoKvq+0y3TtniEL5IQECgYEAlPqBQ11Sctim2B8eRmgC\nknDf6deMDEccQTNsjn3pMjN4vEeLAJIBpEvLTqAkunHn1sGZHLW6dycJXcgEUPPM\n9uvONiX5GV38KL2LPnNhxwKkKtv4xdoj/TE9D9NoxpM/43xZGQz4vdLuaAW1qTdA\ng66T1XZglgVJS5Ku7yq10r0=\n-----END PRIVATE KEY-----\n",
-    "client_email": "firebase-adminsdk-rxtz9@attendencetracker-ca4cd.iam.gserviceaccount.com",
-    "client_id": "116628847401113754753",
-    "auth_uri": "https://accounts.google.com/o/oauth2/auth",
-    "token_uri": "https://oauth2.googleapis.com/token",
-    "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
-    "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-rxtz9%40attendencetracker-ca4cd.iam.gserviceaccount.com",
-    "universe_domain": "googleapis.com"
+    "type": os.getenv("FIREBASE_TYPE"),
+    "project_id": os.getenv("FIREBASE_PROJECT_ID"),
+    "private_key_id": os.getenv("FIREBASE_PRIVATE_KEY_ID"),
+    "private_key": os.getenv("FIREBASE_PRIVATE_KEY").replace("\\n", "\n"),
+    "client_email": os.getenv("FIREBASE_CLIENT_EMAIL"),
+    "client_id": os.getenv("FIREBASE_CLIENT_ID"),
+    "auth_uri": os.getenv("FIREBASE_AUTH_URI"),
+    "token_uri": os.getenv("FIREBASE_TOKEN_URI"),
+    "auth_provider_x509_cert_url": os.getenv("FIREBASE_AUTH_PROVIDER_CERT_URL"),
+    "client_x509_cert_url": os.getenv("FIREBASE_CLIENT_CERT_URL"),
+    "universe_domain": os.getenv("FIREBASE_UNIVERSE_DOMAIN")
 }
 
 # Initialize Firebase Admin SDK
@@ -29,6 +35,7 @@ cred = credentials.Certificate(firebase_credentials)
 firebase_admin.initialize_app(cred, {
     'storageBucket': 'attendencetracker-ca4cd.appspot.com'  
 })
+
 
 
 def upload_annotated_image(annotated_image_bytes, subject, section, name):
