@@ -5,6 +5,7 @@ FROM python:3.8-slim
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         cmake \
+        build-essential \
         libboost-all-dev \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,7 +22,7 @@ COPY requirements.txt .
 RUN pip install -r requirements.txt
 
 # Set the working directory in the container
-WORKDIR /app
+WORKDIR /usr/src/app
 
 # Copy the rest of the application code to the container
 COPY . .
