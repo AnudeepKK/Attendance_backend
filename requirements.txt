@@ -3,4 +3,5 @@ firebase-admin
 Pillow
 python-dotenv
 gunicorn
+dlib-bin
 face_recognition
